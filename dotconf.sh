@@ -31,6 +31,7 @@ pull() {
             1)
                 ts=${file%/}
                 tn=${ts##*/}
+                echo "Running: cp -rf $ts $tn"
                 cp -rf $ts $tn
                 ;;
             -1)
@@ -54,6 +55,7 @@ push() {
                 ts=${file%/}
                 tn=${ts##*/}
                 ts="${ts%/*}/"
+                echo "Running: cp -rf $tn $ts"
                 cp -rf $tn $ts
                 ;;
             -1)
