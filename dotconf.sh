@@ -26,11 +26,7 @@ pull() {
         check_file "$file"
         case $? in
             0)
-                ts=${file%/*}
-                tn=${ts##*/}
-                echo "Copying file: $file"
-                echo "tn=$tn"
-                echo "ts=$ts"
+                echo "Pull File: $file" 
                 ;;
             1)
                 ts=${file%/}
@@ -49,7 +45,23 @@ pull() {
 push() {
     echo "Pushing dotfiles to the files array."
     for file in "${files[@]}"; do
-        echo "Push File: $file"
+        check_file "$file"
+        case $? in
+            0)
+                echo "Push File: $file"
+                ;;
+            1)
+                ts=${file%/}
+                tn=${ts##*/}
+                ts="${ts%/*}/"
+                cp -rf $tn $ts
+                ;;
+            -1)
+                echo "Error: The file or directory does not exist."
+                echo "File: $file"
+                exit 1
+                ;;
+        esac
     done
 }
 
