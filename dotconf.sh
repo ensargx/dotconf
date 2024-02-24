@@ -17,6 +17,7 @@ pull() {
         fc="${file##*/}"
         fn="${file%/*}"
         echo "running: cp -rf $fn/$fc $cdir/$fc"
+        cp -rf $fn/$fc $cdir/$fc
     done
 }
 
@@ -25,6 +26,7 @@ push() {
         fc="${file##*/}"
         fn="${file%/*}"
         echo "running: cp -rf ./$cdir/$fc $fn"
+        cp -rf ./$cdir/$fc $fn
     done
 }
 
