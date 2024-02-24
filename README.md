@@ -7,8 +7,7 @@ Before using the script, you have to write which files/directories you want to c
 Also you shouldn't add trailing slash to the directories/files.
 
 ## Usage
+```
 ./dotconf.sh pull # This will copy files/directories into the dotconf's directory
-
 ./dotconf.sh push # This will copy files/directories into the directory you chose
-
-
+```
