@@ -6,6 +6,7 @@ if [[ -z $usr_home ]]; then
     exit 1
 fi
 usr_conf=$usr_home/.config
+cdir=$(dirname "$0")
 
 files=(
     "$usr_conf/nvim"
@@ -13,19 +14,17 @@ files=(
 
 pull() {
     for file in "${files[@]}"; do
-        echo "Pulling dotfiles from the files array."
         fc="${file##*/}"
         fn="${file%/*}"
-        echo "fn: $fn"
-        echo "fc: $fc"
-        echo "running: cp -rf $fn/$fc $fc"
+        echo "running: cp -rf $fn/$fc $cdir/$fc"
     done
 }
 
 push() {
-    echo "Pushing dotfiles to the files array."
     for file in "${files[@]}"; do
-        echo "Pushing dotfiles to the files array."
+        fc="${file##*/}"
+        fn="${file%/*}"
+        echo "running: cp -rf ./$cdir/$fc $fn"
     done
 }
 
