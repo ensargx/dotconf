@@ -25,8 +25,8 @@ push() {
     for file in "${files[@]}"; do
         fc="${file##*/}"
         fn="${file%/*}"
-        echo "running: cp -rf ./$cdir/$fc $fn"
-        cp -rf ./$cdir/$fc $fn
+        echo "running: cp -rf $cdir/$fc $fn"
+        cp -rf $cdir/$fc $fn
     done
 }
 
