@@ -16,7 +16,7 @@ pull() {
     for file in "${files[@]}"; do
         fc="${file##*/}"
         fn="${file%/*}"
-        echo "running: cp -rf $fn/$fc $cdir/$fc"
+        echo "running: cp -rf $fn/$fc $cdir/"
         cp -rf $fn/$fc $cdir/$fc
     done
 }

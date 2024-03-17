@@ -14,5 +14,7 @@ vim.opt.rtp:prepend(lazypath)
 require("options")
 require("lazy").setup("plugins")
 
-vim.api.nvim_exec('language en_US', true)
+if vim.fn.has('mac') == 1 then
+  vim.api.nvim_exec('language en_US', true)
+end
 vim.g.neovide_input_macos_alt_is_meta = true
