@@ -10,6 +10,7 @@ cdir=$(dirname "$0")
 
 files=(
     "$usr_conf/nvim"
+    "$usr_home/.tmux.conf"
 )
 
 pull() {
