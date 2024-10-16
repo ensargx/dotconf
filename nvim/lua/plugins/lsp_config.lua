@@ -13,7 +13,7 @@ return {{
     },
     config = function()
         require("mason-lspconfig").setup({
-            ensure_installed = { "pyright", "clangd" }
+            ensure_installed = { "pyright", "clangd", "jdtls" }
         })
     end
 },
@@ -28,7 +28,9 @@ return {{
         vim.keymap.set('n', 'dq', vim.diagnostic.setloclist)
 
         lspconfig.pyright.setup({})
-        lspconfig.clangd.setup({})
+        lspconfig.clangd.setup({init_options = {
+            fallbackFlags = {'--std=c++20'}},
+        })
 
         vim.api.nvim_create_autocmd('LspAttach', {
           group = vim.api.nvim_create_augroup('UserLspConfig', {}),
