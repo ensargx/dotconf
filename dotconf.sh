@@ -5,15 +5,29 @@ if [[ -z $usr_home ]]; then
     echo "Error: The user home directory is not defined."
     exit 1
 fi
-usr_conf=$usr_home/.config
-cdir=$(dirname "$0")
 
-# todo: create a file named dotfiles, evaluate paths from that file
-# files should not be written in this file 
-files=(
-    "$usr_conf/nvim"
-    "$usr_home/.tmux.conf"
-)
+usr_conf="${CONFIG:-"$usr_home/.config"}"
+cdir=$(dirname "$0")
+CONFIG=$usr_conf
+
+conf_list_file="dotlist"
+files=()
+
+# check if the file dotlist existst
+if [[ ! -f "$cdir/$conf_list_file" ]]; then
+    echo "No conflist file found, creating one"
+    touch -- "$cdir/$conf_list_file"
+fi
+
+# read config list file and use those paths
+while IFS= read -r line; do
+    if [[ "$line" =~ ^# ]] || [[ -z "$line" ]]; then
+        continue
+    fi
+
+    eval "expanded_line=\"$line\""
+    files+=("$expanded_line")
+done < $conf_list_file
 
 # check if a path is a directory or file 
 check_path() {
@@ -67,6 +81,11 @@ push() {
     done
 }
 
+add_to_conf() {
+    echo "$1"
+    echo "$1" >> "$cdir/$conf_list_file"
+}
+
 case $1 in
     pull)
         pull
@@ -75,8 +94,7 @@ case $1 in
         push
         ;;
     add)
-        file_or_dir=$2
-        echo "Adding file or directory: $file_or_dir"
+        add_to_conf $2
         ;;
     *)
         echo "Error: Invalid command."
