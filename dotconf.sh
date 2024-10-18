@@ -81,9 +81,21 @@ push() {
     done
 }
 
+# if absolute path starts with CONFIG/HOME, get its relative path
+parse_path() {
+    local path=$1
+    if [[ "$path" == "$CONFIG"* ]]; then
+        path="\$CONFIG${path#"$CONFIG"}"
+    elif [[ "$path" == "$HOME"* ]]; then
+        path="\$HOME${path#"$HOME"}"
+    fi
+
+    echo "$path"
+}
+
 add_to_conf() {
-    echo "$1"
-    echo "$1" >> "$cdir/$conf_list_file"
+    local parsed_path=$(parse_path "$1")
+    echo "$parsed_path" >> "$cdir/$conf_list_file"
 }
 
 case $1 in
