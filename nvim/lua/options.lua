@@ -45,8 +45,13 @@ for i = 1, 9 do
 end
 
 -- Set split window re-maps
-vim.api.nvim_set_keymap('n', '<leader>w,', ':lua split_clean(\'vsplit\')<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>w.', ':lua split_clean(\'split\')<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>wn', ':tabnew<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>wd', ':close<CR>',  { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>,', ':lua split_clean(\'vsplit\')<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>.', ':lua split_clean(\'split\')<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>c', ':tabnew<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>d', ':close<CR>',  { noremap = true, silent = true })
+
+vim.api.nvim_set_keymap('n', '<leader>h', ':vertical resize -2<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>j', ':resize +2<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>k', ':resize -2<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>l', ':vertical resize +2<CR>', { noremap = true, silent = true })
 
