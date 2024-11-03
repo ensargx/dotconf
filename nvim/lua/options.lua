@@ -50,8 +50,18 @@ vim.api.nvim_set_keymap('n', '<leader>.', ':lua split_clean(\'split\')<CR>', { n
 vim.api.nvim_set_keymap('n', '<leader>c', ':tabnew<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>d', ':close<CR>',  { noremap = true, silent = true })
 
+-- Set mapping for resizing
 vim.api.nvim_set_keymap('n', '<leader>h', ':vertical resize -2<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>j', ':resize +2<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>k', ':resize -2<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>l', ':vertical resize +2<CR>', { noremap = true, silent = true })
+
+-- Set leader key mappings for window navigation
+vim.api.nvim_set_keymap("n", "<leader><Up>", ":wincmd k<CR>", { noremap = true, silent = true })   -- Move up
+vim.api.nvim_set_keymap("n", "<leader><Down>", ":wincmd j<CR>", { noremap = true, silent = true }) -- Move down
+vim.api.nvim_set_keymap("n", "<leader><Left>", ":wincmd h<CR>", { noremap = true, silent = true }) -- Move left
+vim.api.nvim_set_keymap("n", "<leader><Right>", ":wincmd l<CR>", { noremap = true, silent = true }) -- Move right
+
+-- Create a mapping for <leader>T to move the current window to a new tab
+vim.api.nvim_set_keymap("n", "<leader>T", "<C-w>T", { noremap = true, silent = true })
 
