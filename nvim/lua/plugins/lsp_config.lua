@@ -28,7 +28,9 @@ return {{
         vim.keymap.set('n', 'dq', vim.diagnostic.setloclist)
 
         lspconfig.pyright.setup({})
-        lspconfig.clangd.setup({})
+        lspconfig.clangd.setup({
+            cmd = {'clangd', '--background-index', '--clang-tidy', '--log=verbose'}
+        })
 
         vim.api.nvim_create_autocmd('LspAttach', {
           group = vim.api.nvim_create_augroup('UserLspConfig', {}),
