@@ -10,6 +10,12 @@ vim.cmd("set clipboard+=unnamedplus") -- copy to system clipboard
 vim.cmd("set noequalalways") -- disable split window resize 
 vim.g.mapleader = " "
 
+-- ğ tuşu ile normal mod
+vim.api.nvim_set_keymap('i', 'ğ', '<Esc>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', 'ğ', '<Esc>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('x', 'ğ', '<Esc>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', 'ü', '<Esc>v', { noremap = true, silent = true })
+
 -- Creates a new split window
 function split_clean(cmd)
     vim.cmd(cmd)
