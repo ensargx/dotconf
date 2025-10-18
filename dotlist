@@ -1,2 +1,3 @@
 $HOME/.tmux.conf
 $CONFIG/nvim
+$HOME/.tmux/
