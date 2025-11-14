@@ -15,6 +15,7 @@ vim.api.nvim_set_keymap('i', 'ğ', '<Esc>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', 'ğ', '<Esc>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('x', 'ğ', '<Esc>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('i', 'ü', '<Esc>v', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'ü', '<Esc>v', { noremap = true, silent = true })
 
 -- Creates a new split window
 function split_clean(cmd)
