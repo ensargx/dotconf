@@ -8,7 +8,9 @@ vim.cmd("set relativenumber")
 vim.cmd("set signcolumn=number")
 vim.cmd("set clipboard+=unnamedplus") -- copy to system clipboard
 vim.cmd("set noequalalways") -- disable split window resize 
+vim.opt.termguicolors = true                       -- Enable 24-bit colors
 vim.g.mapleader = " "
+vim.g.maplocalleader = " "                         -- Set local leader key (NEW)
 
 -- ğ tuşu ile normal mod
 vim.api.nvim_set_keymap('i', 'ğ', '<Esc>', { noremap = true, silent = true })
@@ -17,58 +19,116 @@ vim.api.nvim_set_keymap('x', 'ğ', '<Esc>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('i', 'ü', '<Esc>v', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', 'ü', '<Esc>v', { noremap = true, silent = true })
 
--- Creates a new split window
-function split_clean(cmd)
-    vim.cmd(cmd)
-    vim.cmd('wincmd w')
-    local buf = vim.api.nvim_create_buf(true, true)
-    vim.api.nvim_set_current_buf(buf)
+-- Better window navigation
+vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move to bottom window" })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to top window" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
+
+-- Splitting & Resizing
+vim.keymap.set("n", "<leader>s,", ":vsplit<CR><C-w>l<CR>", { desc = "Split window vertically" })
+vim.keymap.set("n", "<leader>s.", ":split<CR><C-w>j<CR>", { desc = "Split window horizontally" })
+vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", { desc = "Increase window height" })
+vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", { desc = "Decrease window height" })
+vim.keymap.set("n", "<C-Left>", ":vertical resize -2<CR>", { desc = "Decrease window width" })
+vim.keymap.set("n", "<C-Right>", ":vertical resize +2<CR>", { desc = "Increase window width" })
+
+-- Move lines up/down
+vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
+vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
+vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+
+-- Better indenting in visual mode
+vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
+vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
+
+-- Normal mode mappings
+vim.keymap.set("n", "<leader>c", ":nohlsearch<CR>", { desc = "Clear search highlights" })
+
+-- ============================================================================
+-- TABS
+-- ============================================================================
+
+-- Tab display settings
+vim.opt.showtabline = 1  -- Always show tabline (0=never, 1=when multiple tabs, 2=always)
+vim.opt.tabline = ''     -- Use default tabline (empty string uses built-in)
+
+-- Transparent tabline appearance
+vim.cmd([[
+  hi TabLineFill guibg=NONE ctermfg=242 ctermbg=NONE
+]])
+
+-- Function to open file in new tab
+local function open_file_in_tab()
+  vim.ui.input({ prompt = 'File to open in new tab: ', completion = 'file' }, function(input)
+    if input and input ~= '' then
+      vim.cmd('tabnew ' .. input)
+    end
+  end)
 end
 
-function _G.goto_tab(tab_num)
-    local function print_error(message)
-        print(message)
-    end
-
-    -- Check if the tab_num is a number
-    if type(tab_num) ~= "number" then
-        return print_error("Invalid input: Tab number must be a number.")
-    end
-
-    local tab_count = vim.fn.tabpagenr('$')
-
-    -- Check if the specified tab exists
-    if tab_num > tab_count then
-        return print_error("Tab does not exist.")
-    end
-
-    -- Switch to the specified tab
-    vim.cmd('tabnext ' .. tab_num)
+-- Function to duplicate current tab
+local function duplicate_tab()
+  local current_file = vim.fn.expand('%:p')
+  if current_file ~= '' then
+    vim.cmd('tabnew ' .. current_file)
+  else
+    vim.cmd('tabnew')
+  end
 end
 
--- Mapping for <C-w> followed by a number
+-- Function to close tabs to the right
+local function close_tabs_right()
+  local current_tab = vim.fn.tabpagenr()
+  local last_tab = vim.fn.tabpagenr('$')
+
+  for i = last_tab, current_tab + 1, -1 do
+    vim.cmd(i .. 'tabclose')
+  end
+end
+
+-- Function to close tabs to the left
+local function close_tabs_left()
+  local current_tab = vim.fn.tabpagenr()
+
+  for i = current_tab - 1, 1, -1 do
+    vim.cmd('1tabclose')
+  end
+end
+
+-- Enhanced keybindings
+vim.keymap.set('n', '<leader>tO', open_file_in_tab, { desc = 'Open file in new tab' })
+vim.keymap.set('n', '<leader>td', duplicate_tab, { desc = 'Duplicate current tab' })
+-- vim.keymap.set('n', '<leader>tr', close_tabs_right, { desc = 'Close tabs to the right' })
+-- vim.keymap.set('n', '<leader>tL', close_tabs_left, { desc = 'Close tabs to the left' })
+
+-- Alternative navigation (more intuitive)
+vim.keymap.set('n', '<leader>tn', ':tabnew<CR>', { desc = 'New tab' })
+vim.keymap.set('n', '<leader>tx', ':tabclose<CR>', { desc = 'Close tab' })
+
+-- Tab moving
+vim.keymap.set('n', '<leader>tm', ':tabmove<CR>', { desc = 'Move tab' })
+vim.keymap.set('n', '<leader>t>', ':tabmove +1<CR>', { desc = 'Move tab right' })
+vim.keymap.set('n', '<leader>t<', ':tabmove -1<CR>', { desc = 'Move tab left' })
+
+-- Alt switch tabs
+vim.keymap.set('n', '<A-h>',  ':tabprevious<CR>', { desc = 'Previous tab' })
+vim.keymap.set('n', '<A-l>', ':tabnext<CR>',     { desc = 'Next tab' })
+
 for i = 1, 9 do
-    vim.api.nvim_set_keymap('n', '<leader>w' .. i, ':lua goto_tab(' .. i .. ')<CR>', { noremap = true, silent = true })
+  vim.keymap.set('n', '<A-' .. i .. '>', ':tabn ' .. i .. '<CR>')
 end
 
--- Set split window re-maps
-vim.api.nvim_set_keymap('n', '<leader>,', ':lua split_clean(\'vsplit\')<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>.', ':lua split_clean(\'split\')<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>c', ':tabnew<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>d', ':close<CR>',  { noremap = true, silent = true })
-
--- Set mapping for resizing
-vim.api.nvim_set_keymap('n', '<leader>h', ':vertical resize -2<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>j', ':resize +2<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>k', ':resize -2<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>l', ':vertical resize +2<CR>', { noremap = true, silent = true })
-
--- Set leader key mappings for window navigation
-vim.api.nvim_set_keymap("n", "<leader><Up>", ":wincmd k<CR>", { noremap = true, silent = true })   -- Move up
-vim.api.nvim_set_keymap("n", "<leader><Down>", ":wincmd j<CR>", { noremap = true, silent = true }) -- Move down
-vim.api.nvim_set_keymap("n", "<leader><Left>", ":wincmd h<CR>", { noremap = true, silent = true }) -- Move left
-vim.api.nvim_set_keymap("n", "<leader><Right>", ":wincmd l<CR>", { noremap = true, silent = true }) -- Move right
-
--- Create a mapping for <leader>T to move the current window to a new tab
-vim.api.nvim_set_keymap("n", "<leader>T", "<C-w>T", { noremap = true, silent = true })
+-- Function to close buffer but keep tab if it's the only buffer in tab
+local function smart_close_buffer()
+  local buffers_in_tab = #vim.fn.tabpagebuflist()
+  if buffers_in_tab > 1 then
+    vim.cmd('bdelete')
+  else
+    -- If it's the only buffer in tab, close the tab
+    vim.cmd('tabclose')
+  end
+end
+vim.keymap.set('n', '<leader>bd', smart_close_buffer, { desc = 'Smart close buffer/tab' })
 
