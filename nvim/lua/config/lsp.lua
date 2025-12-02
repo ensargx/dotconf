@@ -1,5 +1,5 @@
 vim.lsp.enable('lua_ls')
--- vim.lsp.enable('rust_analyzer')
+vim.lsp.enable('rust_analyzer')
 
 -- LSP completion sırasında TAB ile seçim yapmak
 vim.api.nvim_set_keymap('i', '<Tab>', [[pumvisible() ? "\<C-y>" : "\<Tab>"]], {expr = true, noremap = true})
@@ -37,11 +37,11 @@ vim.diagnostic.config({
   },
 })
 
--- vim.lsp.config('rust_analyzer', {
---     settings = {
---         ["rust-analyzer"] = {
---             cargo = { allFeatures = true }, -- important for dependencies
---             checkOnSave = true,
---         }
---     }
--- })
+vim.lsp.config('rust_analyzer', {
+    settings = {
+        ["rust-analyzer"] = {
+            cargo = { allFeatures = true }, -- important for dependencies
+            checkOnSave = true,
+        }
+    }
+})
