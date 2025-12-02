@@ -1,5 +1,6 @@
 vim.lsp.enable('lua_ls')
 vim.lsp.enable('rust_analyzer')
+vim.lsp.enable('clangd')
 
 -- LSP completion sırasında TAB ile seçim yapmak
 vim.api.nvim_set_keymap('i', '<Tab>', [[pumvisible() ? "\<C-y>" : "\<Tab>"]], {expr = true, noremap = true})
@@ -9,6 +10,9 @@ vim.keymap.set('n', 'de', vim.diagnostic.open_float)
 vim.keymap.set('n', 'db', vim.diagnostic.goto_prev)
 vim.keymap.set('n', 'dn', vim.diagnostic.goto_next)
 vim.keymap.set('n', 'dq', vim.diagnostic.setloclist)
+
+-- Inlay hints
+vim.lsp.inlay_hint.enable(true)
 
 vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(ev)
