@@ -18,7 +18,7 @@ require('telescope').setup{
         ["q"] = require('telescope.actions').close
       },
       i = {
-          ["<ESC>"] = require('telescope.actions').close 
+          ["<ESC>"] = require('telescope.actions').close
       }
     }
   },
@@ -41,8 +41,8 @@ require('telescope').setup{
 }
 
 local builtin = require("telescope.builtin")
-        vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-        vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-        vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-    end
+    vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = "Find Files" })
+    vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = "Live Grep" })
+    vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = "List Buffers" })
+end
 }

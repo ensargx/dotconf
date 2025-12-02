@@ -12,6 +12,8 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("options")
+require("config.lsp")
+require("config.keymaps")
 require("lazy").setup("plugins")
 
 if vim.fn.has('mac') == 1 then

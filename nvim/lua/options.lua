@@ -1,4 +1,3 @@
-vim.cmd("set langmenu=en_US")
 vim.cmd("set expandtab")
 vim.cmd("set tabstop=4")
 vim.cmd("set softtabstop=4")
@@ -13,11 +12,11 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "                         -- Set local leader key (NEW)
 
 -- ğ tuşu ile normal mod
-vim.api.nvim_set_keymap('i', 'ğ', '<Esc>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', 'ğ', '<Esc>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('x', 'ğ', '<Esc>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', 'ü', '<Esc>v', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'ü', '<Esc>v', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', 'ğ', '<Esc>', { noremap = false, silent = true })
+vim.api.nvim_set_keymap('v', 'ğ', '<Esc>', { noremap = false, silent = true })
+vim.api.nvim_set_keymap('x', 'ğ', '<Esc>', { noremap = false, silent = true })
+vim.api.nvim_set_keymap('i', 'ü', '<Esc>v', { noremap = false, silent = true })
+vim.api.nvim_set_keymap('n', 'ü', '<Esc>v', { noremap = false, silent = true })
 
 -- Better window navigation
 vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
@@ -26,8 +25,8 @@ vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to top window" })
 vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 
 -- Splitting & Resizing
-vim.keymap.set("n", "<leader>s,", ":vsplit<CR><C-w>l<CR>", { desc = "Split window vertically" })
-vim.keymap.set("n", "<leader>s.", ":split<CR><C-w>j<CR>", { desc = "Split window horizontally" })
+vim.keymap.set("n", "<leader>t,", ":vsplit<CR><C-w>l<CR>", { desc = "Split window vertically" })
+vim.keymap.set("n", "<leader>t.", ":split<CR><C-w>j<CR>", { desc = "Split window horizontally" })
 vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", { desc = "Increase window height" })
 vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", { desc = "Decrease window height" })
 vim.keymap.set("n", "<C-Left>", ":vertical resize -2<CR>", { desc = "Decrease window width" })
@@ -44,7 +43,16 @@ vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 
 -- Normal mode mappings
-vim.keymap.set("n", "<leader>c", ":nohlsearch<CR>", { desc = "Clear search highlights" })
+vim.keymap.set("n", "<leader>cc", ":nohlsearch<CR>", { desc = "Clear search highlights" })
+
+-- Treesitter folding 
+vim.wo.foldmethod = 'expr'
+vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
+vim.wo.foldlevel = 99
+
+-- Inlay hints
+vim.lsp.inlay_hint.enable(true)
+
 
 -- ============================================================================
 -- TABS
@@ -131,4 +139,5 @@ local function smart_close_buffer()
   end
 end
 vim.keymap.set('n', '<leader>bd', smart_close_buffer, { desc = 'Smart close buffer/tab' })
+
 
