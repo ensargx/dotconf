@@ -8,6 +8,7 @@ vim.cmd("set signcolumn=number")
 vim.cmd("set clipboard+=unnamedplus") -- copy to system clipboard
 vim.cmd("set noequalalways") -- disable split window resize 
 vim.opt.termguicolors = true                       -- Enable 24-bit colors
+vim.opt.signcolumn = "yes"
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "                         -- Set local leader key (NEW)
 
