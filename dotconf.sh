@@ -1,104 +1,138 @@
 #!/bin/bash
 
-usr_home=$HOME
-if [[ -z $usr_home ]]; then
-    echo "Error: The user home directory is not defined."
-    exit 1
-fi
+set -e
 
-usr_conf="${CONFIG:-"$usr_home/.config"}"
-cdir=$(dirname "$0")
-CONFIG=$usr_conf
+dotlist="dotlist"
+project_root="$(cd "$(dirname "$0")"; pwd)"
 
-conf_list_file="dotlist"
-files=()
+# Use $CONFIG if set; otherwise, default to $HOME/.config
+export CONFIG="${CONFIG:-"$HOME/.config"}"
 
-# check if the file dotlist existst
-if [[ ! -f "$cdir/$conf_list_file" ]]; then
-    echo "No conflist file found, creating one"
-    touch -- "$cdir/$conf_list_file"
-fi
-
-# read config list file and use those paths
-while IFS= read -r line; do
-    if [[ "$line" =~ ^# ]] || [[ -z "$line" ]]; then
-        continue
-    fi
-
-    eval "expanded_line=\"$line\""
-    files+=("$expanded_line")
-done < $conf_list_file
-
-# check if a path is a directory or file 
-check_path() {
-    local path="$1" # path to check
-
-    if [[ -f $path ]]; then
-        echo "f"
-    elif [[ -d $path ]]; then
-        echo "d"
-    else 
-        echo "n"
-    fi
+# Expand variables like $CONFIG, $HOME, etc.
+expand_vars() {
+    local input="$1"
+    eval "echo \"$input\""
 }
 
+# Pull: collect all files/dirs and git repos from dotlist into the project root
 pull() {
-    for file in "${files[@]}"; do
-        fc="${file##*/}" # Get filename
-        fn="${file%/*}"  # Get directory name
+    while IFS="|" read -r protocol source dest; do
+        [[ -z "$protocol" ]] && continue
+        [[ "$protocol" =~ ^# ]] && continue
 
-        # check if fc is a directory 
-        local result=$(check_path "$fn/$fc")
-        
-        # handle the case if directory
-        if [[ $result == "d" ]]; then 
-            # create a directory if not exists 
-            /bin/rm -rf -- "$cdir/$fc"
-            /bin/cp -r -- "$fn/$fc" "$cdir"
-
-        # handle the case if file
-        elif [[ $result == "f" ]]; then
-            /bin/rm -f -- "$cdir/$fc"
-            /bin/cp -f -- "$fn/$fc" "$cdir"
-
-        else 
-            # handle error case
-            echo "Unknown error accured!"
-            exit -1
-        fi 
-        # echo "running: cp -rf $fn/$fc $cdir/"
-        # cp -rf $fn/$fc $cdir/$fc
-    done
+        case "$protocol" in
+            file)
+                expanded_source=$(expand_vars "$source")
+                if [[ ! -e "$expanded_source" ]]; then
+                    echo "WARNING: File or directory '$expanded_source' not found. Skipping."
+                    continue
+                fi
+                target="$project_root/$(basename "$expanded_source")"
+                if [[ -d "$expanded_source" ]]; then
+                    echo "Copy directory: $expanded_source → $target"
+                    rm -rf "$target"
+                    cp -r "$expanded_source" "$target"
+                else
+                    echo "Copy file: $expanded_source → $target"
+                    cp -f "$expanded_source" "$target"
+                fi
+                ;;
+            git)
+                # Skip git protocol during pull
+                echo "INFO: Skipping git protocol during pull."
+                ;;
+            *)
+                echo "ERROR: Unknown protocol '$protocol'. Skipping."
+                ;;
+        esac
+    done < "$dotlist"
 }
 
+# Push: copy from project root to original location ($CONFIG for files)
 push() {
-    echo "todo: fix"
-    for file in "${files[@]}"; do
-        fc="${file##*/}"
-        fn="${file%/*}"
-        echo "running: cp -rf $cdir/$fc $fn"
-        cp -rf $cdir/$fc $fn
-    done
+    while IFS="|" read -r protocol source dest; do
+        [[ -z "$protocol" ]] && continue
+        [[ "$protocol" =~ ^# ]] && continue
+
+        case "$protocol" in
+            file)
+                expanded_source=$(expand_vars "$source")
+                item_name=$(basename "$expanded_source")
+                src="$project_root/$item_name"
+                if [[ ! -e "$src" ]]; then
+                    echo "WARNING: '$src' not found in project root. Skipping."
+                    continue
+                fi
+                dest_dir=$(dirname "$expanded_source")
+                mkdir -p "$dest_dir"
+                if [[ -d "$src" ]]; then
+                    echo "Copy directory: $src → $expanded_source"
+                    rm -rf "$expanded_source"
+                    cp -r "$src" "$expanded_source"
+                else
+                    echo "Copy file: $src → $expanded_source"
+                    cp -f "$src" "$expanded_source"
+                fi
+                ;;
+            git)
+                if [[ -z "$source" || -z "$dest" ]]; then
+                    echo "ERROR: git entry requires both source and destination."
+                    continue
+                fi
+                expanded_dest=$(expand_vars "$dest")
+                if [[ -d "$expanded_dest/.git" ]]; then
+                    echo "INFO: Directory '$expanded_dest' already exists and is a git repo. Skipping clone."
+                    continue
+                fi
+                echo "Cloning $source → $expanded_dest"
+                git clone "$source" "$expanded_dest"
+                ;;
+            *)
+                echo "ERROR: Unknown protocol '$protocol'. Skipping."
+                ;;
+        esac
+    done < "$dotlist"
 }
 
-# if absolute path starts with CONFIG/HOME, get its relative path
-parse_path() {
-    local path=$1
-    if [[ "$path" == "$CONFIG"* ]]; then
-        path="\$CONFIG${path#"$CONFIG"}"
-    elif [[ "$path" == "$HOME"* ]]; then
-        path="\$HOME${path#"$HOME"}"
+# Add: Add a new entry to dotlist (protocol|path|dest for git, protocol|path for file)
+add() {
+    local protocol=$1
+    local source=$2
+    local dest=$3
+    if [[ "$protocol" == "file" ]]; then
+        # Make path relative to project root if possible (store as $CONFIG/...)
+        if [[ "$source" == "$CONFIG"* ]]; then
+            entry="file|\$CONFIG${source#"$CONFIG"}"
+        elif [[ "$source" == "$HOME"* ]]; then
+            entry="file|\$HOME${source#"$HOME"}"
+        else
+            entry="file|$source"
+        fi
+        echo "$entry" >> "$dotlist"
+        echo "Added: $entry"
+    elif [[ "$protocol" == "git" ]]; then
+        if [[ -z "$dest" ]]; then
+            echo "Destination is required for git protocol."
+            exit 1
+        fi
+        echo "git|$source|$dest" >> "$dotlist"
+        echo "Added: git|$source|$dest"
+    else
+        echo "Invalid protocol: $protocol"
+        exit 1
     fi
-
-    echo "$path"
 }
 
-add_to_conf() {
-    local parsed_path=$(parse_path "$1")
-    echo "$parsed_path" >> "$cdir/$conf_list_file"
+usage() {
+    echo "Usage: $0 [pull|push|add]"
+    echo "  pull             Pull files/repos as described in dotlist"
+    echo "  push             Push files back to original locations"
+    echo "  add file <path>  Add a file/directory by path"
+    echo "  add git <url> <dest>  Add a git repo"
+    exit 1
 }
 
-case $1 in
+case "$1" in
     pull)
         pull
         ;;
@@ -106,11 +140,15 @@ case $1 in
         push
         ;;
     add)
-        add_to_conf $2
+        if [[ "$2" == "file" && -n "$3" ]]; then
+            add file "$3"
+        elif [[ "$2" == "git" && -n "$3" && -n "$4" ]]; then
+            add git "$3" "$4"
+        else
+            usage
+        fi
         ;;
     *)
-        echo "Error: Invalid command."
-        echo "Usage: dotconf.sh [pull|push|add]"
-        exit 1
+        usage
         ;;
 esac
