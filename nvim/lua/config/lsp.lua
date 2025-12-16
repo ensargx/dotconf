@@ -1,6 +1,7 @@
 vim.lsp.enable('lua_ls')
 vim.lsp.enable('rust_analyzer')
 vim.lsp.enable('clangd')
+vim.lsp.enable('pyright')
 
 vim.keymap.set('n', 'de', vim.diagnostic.open_float)
 vim.keymap.set('n', 'db', vim.diagnostic.goto_prev)
@@ -45,3 +46,4 @@ vim.lsp.config('rust_analyzer', {
         }
     }
 })
+
