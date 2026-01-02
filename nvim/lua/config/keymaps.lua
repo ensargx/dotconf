@@ -33,6 +33,10 @@ map("v", "ç", ">gv", { desc = "Indent right and reselect" })
 -- Normal mode mappings
 map("n", "<leader>cc", ":nohlsearch<CR>", { desc = "Clear search highlights" })
 
+-- insert mode tab disaled
+map("i", "<C-t>", "<Nop>")
+map("i", "<C-d>", "<Nop>")
+
 -- Function to open file in new tab
 local function open_file_in_tab()
   vim.ui.input({ prompt = 'File to open in new tab: ', completion = 'file' }, function(input)
