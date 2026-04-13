@@ -1,7 +1,7 @@
 vim.lsp.enable('lua_ls')
 vim.lsp.enable('rust_analyzer')
 vim.lsp.enable('clangd')
-vim.lsp.enable('pyright')
+vim.lsp.enable('basedpyright')
 
 vim.keymap.set('n', 'de', vim.diagnostic.open_float)
 vim.keymap.set('n', 'db', vim.diagnostic.goto_prev)
@@ -45,5 +45,18 @@ vim.lsp.config('rust_analyzer', {
             checkOnSave = true,
         }
     }
+})
+
+vim.lsp.config('basedpyright', {
+  cmd = { 'basedpyright-langserver', '--stdio' },
+  root_markers = { 'pyproject.toml', 'setup.py', '.git' },
+  filetypes = { 'python' },
+  settings = {
+    basedpyright = {
+      analysis = {
+        typeCheckingMode = "basic",
+      },
+    },
+  },
 })
 
