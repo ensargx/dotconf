@@ -1,7 +1,5 @@
 vim.lsp.enable('lua_ls')
-vim.lsp.enable('rust_analyzer')
 vim.lsp.enable('clangd')
-vim.lsp.enable('basedpyright')
 
 vim.keymap.set('n', 'de', vim.diagnostic.open_float)
 vim.keymap.set('n', 'db', vim.diagnostic.goto_prev)
@@ -46,6 +44,7 @@ vim.lsp.config('rust_analyzer', {
         }
     }
 })
+vim.lsp.enable('rust_analyzer')
 
 vim.lsp.config('basedpyright', {
   cmd = { 'basedpyright-langserver', '--stdio' },
@@ -58,5 +57,21 @@ vim.lsp.config('basedpyright', {
       },
     },
   },
+})
+vim.lsp.enable('basedpyright')
+
+vim.lsp.config('verible', {
+  cmd = {
+    'verible-verilog-ls',
+    '--rules_config_search',
+    '--rules=-line-length,-no-tabs,-parameter-name-style,-macro-name-style',
+  },
+})
+vim.lsp.enable('verible')
+vim.filetype.add({
+  extension = {
+    v = 'verilog',
+    sv = 'systemverilog'
+  }
 })
 
