@@ -1,7 +1,23 @@
-vim.keymap.set('n', 'de', vim.diagnostic.open_float)
-vim.keymap.set('n', 'db', vim.diagnostic.goto_prev)
-vim.keymap.set('n', 'dn', vim.diagnostic.goto_next)
+vim.keymap.set('n', 'dk', vim.diagnostic.open_float)
 vim.keymap.set('n', 'dq', vim.diagnostic.setloclist)
+
+vim.keymap.set('n', 'dü', function()
+  vim.diagnostic.jump({
+    count = 1,
+    on_jump = function()
+      vim.diagnostic.open_float({ focus = false })
+    end
+  })
+end, { desc = "Sonraki uyarıya git" })
+
+vim.keymap.set('n', 'dğ', function()
+  vim.diagnostic.jump({
+    count = -1,
+    on_jump = function()
+      vim.diagnostic.open_float({ focus = false })
+    end
+  })
+end, { desc = "Önceki uyarıya git" })
 
 -- Inlay hints
 vim.lsp.inlay_hint.enable(true)
@@ -24,12 +40,6 @@ vim.diagnostic.config({
   virtual_text = {
     prefix = "",
     severity = { min = vim.diagnostic.severity.WARN },
-  },
-  float = {
-    border = "rounded",
-    source = true,
-    header = '',
-    prefix = '',
   },
 })
 
