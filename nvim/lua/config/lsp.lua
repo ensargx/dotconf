@@ -1,6 +1,3 @@
-vim.lsp.enable('lua_ls')
-vim.lsp.enable('clangd')
-
 vim.keymap.set('n', 'de', vim.diagnostic.open_float)
 vim.keymap.set('n', 'db', vim.diagnostic.goto_prev)
 vim.keymap.set('n', 'dn', vim.diagnostic.goto_next)
@@ -30,11 +27,51 @@ vim.diagnostic.config({
   },
   float = {
     border = "rounded",
-    source = "always",
+    source = true,
     header = '',
     prefix = '',
   },
 })
+
+-- Language server configurations
+
+vim.lsp.config('lua_ls', {
+  cmd = { "lua-language-server" },
+  filetypes = { "lua" },
+  root_markers = { ".emmyrc.json", ".luarc.json", ".luarc.jsonc", ".luacheckrc", ".stylua.toml", "stylua.toml", "selene.toml", "selene.yml", ".git" },
+  settings = {
+    Lua = {
+      runtime = {
+        -- Tell the language server which version of Lua you're using
+        -- (most likely LuaJIT in the case of Neovim)
+        version = 'LuaJIT',
+      },
+      diagnostics = {
+        -- Get the language server to recognize the 'vim' global
+        globals = {
+          'vim',
+          'require'
+        },
+      },
+      workspace = {
+        -- Make the server aware of Neovim runtime files
+        library = vim.api.nvim_get_runtime_file("", true),
+      },
+      -- Do not send telemetry data containing a randomized but unique identifier
+      telemetry = {
+        enable = false,
+      },
+    },
+  },
+})
+vim.lsp.enable('lua_ls')
+
+vim.lsp.config('clangd', {
+  cmd = { 'clangd', '--background-index' },
+  root_markers = { 'compile_commands.json', 'compile_flags.txt' },
+  filetypes = { 'c', 'cpp', 'proto' }
+})
+vim.lsp.enable('clangd')
 
 vim.lsp.config('rust_analyzer', {
     settings = {
@@ -61,6 +98,7 @@ vim.lsp.config('basedpyright', {
 vim.lsp.enable('basedpyright')
 
 vim.lsp.config('verible', {
+  filetypes = { 'verilog', 'systemverilog' },
   cmd = {
     'verible-verilog-ls',
     '--rules_config_search',
@@ -74,4 +112,3 @@ vim.filetype.add({
     sv = 'systemverilog'
   }
 })
-
