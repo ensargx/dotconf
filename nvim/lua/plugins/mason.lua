@@ -17,6 +17,7 @@ return {
           'lua-language-server',
           'rust-analyzer',
           'verible',
+          'buf',
         },
 
         -- if set to true this will check each tool for updates. If updates
