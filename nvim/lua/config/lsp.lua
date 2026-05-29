@@ -10,6 +10,7 @@ vim.filetype.add({
     sv = 'systemverilog'
   }
 })
+vim.lsp.enable('ts_ls')
 
 vim.keymap.set('n', 'dk', vim.diagnostic.open_float)
 vim.keymap.set('n', 'dq', vim.diagnostic.setloclist)

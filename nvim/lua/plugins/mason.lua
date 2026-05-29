@@ -18,6 +18,7 @@ return {
           'rust-analyzer',
           'verible',
           'buf',
+          'typescript-language-server',
         },
 
         -- if set to true this will check each tool for updates. If updates
